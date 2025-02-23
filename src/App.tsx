@@ -1,13 +1,13 @@
 import { AppProvider } from "./contexts/AppContext";
 import Settings from "./pages/Settings";
-import Slideshow from "./pages/Playlist";
+import Playlist from "./pages/Playlist";
 import { useApp } from "./contexts/AppContext";
 
 function AppContent() {
     const { runApp, selectedFolder } = useApp();
 
     if (runApp && selectedFolder) {
-        return <Slideshow />;
+        return <Playlist />;
     }
     return <Settings />;
 }

@@ -1,26 +1,26 @@
 import { useEffect } from "react";
 
 interface KeyboardControls {
-    onNext?: () => void;
-    onPrev?: () => void;
-    onPause?: () => void;
-    onExit?: () => void;
+    onArrowRight?: () => void;
+    onArrowLeft?: () => void;
+    onSpace?: () => void;
+    onEscape?: () => void;
 }
 export const useKeyboardControls = (controls: KeyboardControls) => {
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
             switch (event.key) {
                 case "ArrowRight":
-                    controls.onNext?.();
+                    controls.onArrowRight?.();
                     break;
                 case "ArrowLeft":
-                    controls.onPrev?.();
+                    controls.onArrowLeft?.();
                     break;
                 case " ":
-                    controls.onPause?.();
+                    controls.onSpace?.();
                     break;
                 case "Escape":
-                    controls.onExit?.();
+                    controls.onEscape?.();
                     break;
             }
         };
