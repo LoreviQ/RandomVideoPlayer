@@ -1,22 +1,15 @@
 import type { SelectedFolder } from "../types/preferences";
-import { usePreferences } from "../contexts/PreferencesContext";
-import { FixedTime } from "../types/session";
 import { ActionButton } from "../components/buttons";
 import { formatFileSize } from "../utils/formatters";
 import { useApp } from "../contexts/AppContext";
 import { DragAndDropOverlay, Hero } from "../components/style";
 
 export default function Settings({}) {
-    const { preferences } = usePreferences();
     const { selectedFolder, handleFolderSelect, handleFileSelect, isDragging, setRunApp } = useApp();
 
     const runApp = () => {
         if (!selectedFolder) {
             alert("Please select a folder first");
-            return;
-        }
-        if (preferences.fixedTime === FixedTime.Other && preferences.customFixedTime === null) {
-            alert("Please enter a custom fixed time");
             return;
         }
         setRunApp(true);
