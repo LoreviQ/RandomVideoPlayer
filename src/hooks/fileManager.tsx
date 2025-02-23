@@ -5,7 +5,7 @@ import { logger } from '../utils/logger';
 
 interface FileManagerState {
     selectedFolder: SelectedFolder | null;
-    imageFiles: File[];
+    videoFiles: File[];
     isDragging: boolean;
 }
 
@@ -17,7 +17,7 @@ interface FileManagerActions {
 
 export function useFileManager(runApp: boolean): FileManagerState & FileManagerActions {
     const [selectedFolder, setSelectedFolder] = useState<SelectedFolder | null>(null);
-    const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [videoFiles, setVideoFiles] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
 
     // Handle files opened via the launch queue
@@ -30,17 +30,17 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
                     launchParams.files.map((handle: FileSystemFileHandle) => handle.getFile())
                 );
 
-                const imageFiles = files.filter((file) => file.type.startsWith("image/"));
-                if (imageFiles.length === 0) return;
+                const videoFiles = files.filter((file) => file.type.startsWith("video/"));
+                if (videoFiles.length === 0) return;
 
-                const totalSize = imageFiles.reduce((sum, file) => sum + file.size, 0);
+                const totalSize = videoFiles.reduce((sum, file) => sum + file.size, 0);
                 setSelectedFolder({
                     name: "Opened Files",
-                    items: imageFiles.length,
+                    items: videoFiles.length,
                     totalSize: totalSize,
                     dirHandle: null,
                 });
-                setImageFiles(imageFiles);
+                setVideoFiles(videoFiles);
             });
         }
     }, []);
@@ -48,7 +48,7 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
     const updateFolderData = async (dirHandle: FileSystemDirectoryHandle) => {
         const files = await FileScanner(dirHandle);
         if (files.length === 0) {
-            alert("No image files found in the selected folder");
+            alert("No video files found in the selected folder");
             return;
         }
         const totalSize = files.reduce((sum, file) => sum + file.size, 0);
@@ -58,7 +58,7 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
             totalSize: totalSize,
             dirHandle: dirHandle,
         });
-        setImageFiles(files);
+        setVideoFiles(files);
     };
 
     const handleFolderSelect = async () => {
@@ -91,14 +91,14 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
         const input = document.createElement("input");
         input.type = "file";
         input.multiple = true;
-        input.accept = "image/*";
+        input.accept = "video/*";
 
         input.onchange = async (e: Event) => {
             const target = e.target as HTMLInputElement;
-            const files = Array.from(target.files || []).filter((file) => file.type.startsWith("image/"));
+            const files = Array.from(target.files || []).filter((file) => file.type.startsWith("video/"));
 
             if (files.length === 0) {
-                alert("No image files selected");
+                alert("No video files selected");
                 return;
             }
 
@@ -109,7 +109,7 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
                 totalSize: totalSize,
                 dirHandle: null,
             });
-            setImageFiles(files);
+            setVideoFiles(files);
         };
         input.click();
     };
@@ -118,10 +118,10 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
         e.preventDefault();
         setIsDragging(false);
         const items = Array.from(e.dataTransfer?.files || []).filter((file): file is File =>
-            file.type.startsWith("image/")
+            file.type.startsWith("video/")
         );
         if (items.length === 0) {
-            alert("No image files found in drop");
+            alert("No video files found in drop");
             return;
         }
         const totalSize = items.reduce((sum, file) => sum + file.size, 0);
@@ -131,7 +131,7 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
             totalSize: totalSize,
             dirHandle: null,
         });
-        setImageFiles(items);
+        setVideoFiles(items);
     };
 
     useEffect(() => {
@@ -193,15 +193,15 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
             return false;
         }
 
-        const fileToDelete = imageFiles[index];
+        const fileToDelete = videoFiles[index];
         const confirmDelete = window.confirm(`Are you sure you want to delete:\n${fileToDelete.name}?`);
         if (!confirmDelete) return false;
 
         try {
             await selectedFolder.dirHandle.removeEntry(fileToDelete.name);
-            const newImageFiles = [...imageFiles];
-            newImageFiles.splice(index, 1);
-            setImageFiles(newImageFiles);
+            const newVideoFiles = [...videoFiles];
+            newVideoFiles.splice(index, 1);
+            setVideoFiles(newVideoFiles);
             return true;
         } catch (error) {
             console.error("Error deleting file:", error);
@@ -212,7 +212,7 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
 
     return {
         selectedFolder,
-        imageFiles,
+        videoFiles,
         isDragging,
         handleFolderSelect,
         handleFileSelect,
@@ -226,7 +226,7 @@ async function FileScanner(dirHandle: FileSystemDirectoryHandle): Promise<File[]
         if (entry.kind === "file") {
             const fileHandle = entry as FileSystemFileHandle;
             const file = await fileHandle.getFile();
-            if (file.type.startsWith("image/")) {
+            if (file.type.startsWith("video/")) {
                 files.push(file);
             }
         }
