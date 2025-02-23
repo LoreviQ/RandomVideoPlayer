@@ -1,8 +1,8 @@
-import type { SelectedFolder } from "../types/preferences";
 import { ActionButton } from "../components/buttons";
 import { formatFileSize } from "../utils/formatters";
 import { useApp } from "../contexts/AppContext";
 import { DragAndDropOverlay, Hero } from "../components/style";
+import { useState } from "react";
 
 export default function Settings({}) {
     const { selectedFolder, handleFolderSelect, handleFileSelect, isDragging, setRunApp } = useApp();
@@ -27,8 +27,9 @@ export default function Settings({}) {
                         ) : (
                             <ActionButton onClick={handleFileSelect} label="Select Files" colour="bg-blue-600" />
                         )}
-                        <FolderDetails selectedFolder={selectedFolder} />
+                        <FolderDetails />
                         <hr className="border-gray-700" />
+                        <VideoList />
                         <ActionButton onClick={runApp} label="Start" colour="bg-green-700" />
                     </div>
                     <Footer />
@@ -38,7 +39,8 @@ export default function Settings({}) {
     );
 }
 
-function FolderDetails({ selectedFolder }: { selectedFolder: SelectedFolder | null }) {
+function FolderDetails() {
+    const { selectedFolder } = useApp();
     if (!selectedFolder) {
         return (
             <div className="text-gray-400">
@@ -53,6 +55,49 @@ function FolderDetails({ selectedFolder }: { selectedFolder: SelectedFolder | nu
             <p className="text-white text-sm">
                 {selectedFolder.items} items • {formatFileSize(selectedFolder.totalSize)}
             </p>
+        </div>
+    );
+}
+
+function VideoList() {
+    const { videoFiles } = useApp();
+    const [weights, setWeights] = useState<Record<string, number>>({});
+
+    if (videoFiles.length === 0) {
+        return null;
+    }
+
+    const handleWeightChange = (fileName: string, value: string) => {
+        const numValue = parseFloat(value) || 1;
+        setWeights(prev => ({
+            ...prev,
+            [fileName]: numValue
+        }));
+    };
+
+    return (
+        <div className="bg-gray-800 rounded-lg p-4 max-h-[300px] overflow-y-auto">
+            <div className="grid grid-cols-[1fr,100px] gap-4 mb-2 font-medium text-gray-300">
+                <div>Video</div>
+                <div>Weight</div>
+            </div>
+            <div className="space-y-2">
+                {videoFiles.map(file => (
+                    <div key={file.name} className="grid grid-cols-[1fr,100px] gap-4 items-center">
+                        <div className="text-gray-400 truncate" title={file.name}>
+                            {file.name}
+                        </div>
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.1"
+                            value={weights[file.name] || 1}
+                            onChange={(e) => handleWeightChange(file.name, e.target.value)}
+                            className="bg-gray-700 text-white px-2 py-1 rounded w-full"
+                        />
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
