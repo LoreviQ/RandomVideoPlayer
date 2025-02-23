@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import type { SelectedFolder } from "../types/preferences";
 import { saveLastFolder, getLastFolder } from "../utils/indexDB";
 import { logger } from '../utils/logger';
+import { WeightedVideo } from "../types/weights";
 
 interface FileManagerState {
     selectedFolder: SelectedFolder | null;
-    videoFiles: File[];
+    weightedVideos: WeightedVideo[];
     isDragging: boolean;
 }
 
@@ -18,7 +19,13 @@ interface FileManagerActions {
 export function useFileManager(runApp: boolean): FileManagerState & FileManagerActions {
     const [selectedFolder, setSelectedFolder] = useState<SelectedFolder | null>(null);
     const [videoFiles, setVideoFiles] = useState<File[]>([]);
+    const [weightedVideos, setWeightedVideos] = useState<WeightedVideo[]>([]);
     const [isDragging, setIsDragging] = useState(false);
+
+    // Update weighted videos when video files change
+    useEffect(() => {
+        setWeightedVideos(videoFiles.map(file => new WeightedVideo(file, 1)));
+    }, [videoFiles]);
 
     // Handle files opened via the launch queue
     useEffect(() => {
@@ -212,7 +219,7 @@ export function useFileManager(runApp: boolean): FileManagerState & FileManagerA
 
     return {
         selectedFolder,
-        videoFiles,
+        weightedVideos,
         isDragging,
         handleFolderSelect,
         handleFileSelect,

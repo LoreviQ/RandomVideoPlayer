@@ -2,7 +2,7 @@ import { ActionButton } from "../components/buttons";
 import { formatFileSize } from "../utils/formatters";
 import { useApp } from "../contexts/AppContext";
 import { DragAndDropOverlay, Hero } from "../components/style";
-import { useState } from "react";
+import { WeightedVideo } from "../types/weights";
 
 export default function Settings({}) {
     const { selectedFolder, handleFolderSelect, handleFileSelect, isDragging, setRunApp } = useApp();
@@ -60,20 +60,11 @@ function FolderDetails() {
 }
 
 function VideoList() {
-    const { videoFiles } = useApp();
-    const [weights, setWeights] = useState<Record<string, number>>({});
+    const { weightedVideos } = useApp();
 
-    if (videoFiles.length === 0) {
+    if (weightedVideos.length === 0) {
         return null;
     }
-
-    const handleWeightChange = (fileName: string, value: string) => {
-        const numValue = parseFloat(value) || 1;
-        setWeights(prev => ({
-            ...prev,
-            [fileName]: numValue
-        }));
-    };
 
     return (
         <div className="bg-gray-800 rounded-lg p-4 max-h-[300px] overflow-y-auto">
@@ -82,17 +73,17 @@ function VideoList() {
                 <div>Weight</div>
             </div>
             <div className="space-y-2">
-                {videoFiles.map(file => (
-                    <div key={file.name} className="grid grid-cols-[1fr,100px] gap-4 items-center">
-                        <div className="text-gray-400 truncate" title={file.name}>
-                            {file.name}
+                {weightedVideos.map((weightedVideo: WeightedVideo) => (
+                    <div key={weightedVideo.file.name} className="grid grid-cols-[1fr,100px] gap-4 items-center">
+                        <div className="text-gray-400 truncate" title={weightedVideo.file.name}>
+                            {weightedVideo.file.name}
                         </div>
                         <input
                             type="number"
                             min="0"
                             step="0.1"
-                            value={weights[file.name] || 1}
-                            onChange={(e) => handleWeightChange(file.name, e.target.value)}
+                            value={weightedVideo.weight}
+                            onChange={(e) => weightedVideo.changeWeight(e.target.value)}
                             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
                         />
                     </div>

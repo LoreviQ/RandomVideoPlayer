@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-
+import { WeightedVideo } from "../types/weights";
 interface VideoManagementConfig {
-    videoFiles: File[];
+    weightedVideos: WeightedVideo[];
 }
 interface VideoManagementReturn {
     currentVideoURL: string;
@@ -9,16 +9,16 @@ interface VideoManagementReturn {
     prev: () => void;
 }
 export const useVideoManagement = ({
-    videoFiles
+    weightedVideos
 }: VideoManagementConfig): VideoManagementReturn => {
     const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-    const [currentVideoURL, setCurrentVideoURL] = useState<string>(URL.createObjectURL(videoFiles[currentVideoIndex]));
+    const [currentVideoURL, setCurrentVideoURL] = useState<string>(URL.createObjectURL(weightedVideos[currentVideoIndex].file));
 
     // Update video when index changes
     useEffect(() => {
-        const wrappedIndex = currentVideoIndex % videoFiles.length;
-        setCurrentVideoURL(URL.createObjectURL(videoFiles[wrappedIndex]));
-    }, [currentVideoIndex, videoFiles]);
+        const wrappedIndex = currentVideoIndex % weightedVideos.length;
+        setCurrentVideoURL(URL.createObjectURL(weightedVideos[wrappedIndex].file));
+    }, [currentVideoIndex, weightedVideos]);
 
     const next = useCallback(() => {
         setCurrentVideoIndex((prev) => (prev + 1));

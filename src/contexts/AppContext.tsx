@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 import type { SelectedFolder } from "../types/preferences";
 import { useFileManager } from "../hooks/fileManager";
+import { WeightedVideo } from "../types/weights";
 
 interface AppContextType {
     selectedFolder: SelectedFolder | null;
-    videoFiles: File[];
+    weightedVideos: WeightedVideo[];
     runApp: boolean;
     setRunApp: React.Dispatch<React.SetStateAction<boolean>>;
     handleFolderSelect: () => Promise<void>;
@@ -15,14 +16,14 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
     const [runApp, setRunApp] = useState(false);
-    const { selectedFolder, videoFiles, isDragging, handleFolderSelect, handleFileSelect } =
+    const { selectedFolder, weightedVideos, isDragging, handleFolderSelect, handleFileSelect } =
         useFileManager(runApp);
 
     return (
         <AppContext.Provider
             value={{
                 selectedFolder,
-                videoFiles,
+                weightedVideos,
                 runApp,
                 setRunApp,
                 handleFolderSelect,

@@ -6,11 +6,11 @@ import { useVideoManagement } from "../hooks/videoManager";
 import { useApp } from "../contexts/AppContext";
 
 export default function Playlist() {
-    const { videoFiles, setRunApp } = useApp();
+    const { weightedVideos, setRunApp } = useApp();
     const videoRef = useRef<HTMLVideoElement>(null);
 
     // Video Management Hook
-    const { currentVideoURL, next, prev } = useVideoManagement({ videoFiles });
+    const { currentVideoURL, next, prev } = useVideoManagement({ weightedVideos });
 
     // Custom hook for enabling keyboard controls
     useKeyboardControls({
@@ -22,7 +22,7 @@ export default function Playlist() {
 
     return (
         <div className="flex flex-col justify-center items-center h-screen overflow-hidden relative bg-black">
-            {videoFiles.length > 0 ? (
+            {weightedVideos.length > 0 ? (
                 <video
                     ref={videoRef}
                     className="max-h-screen max-w-full"
