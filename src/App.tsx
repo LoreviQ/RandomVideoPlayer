@@ -1,6 +1,6 @@
 import { AppProvider } from "./contexts/AppContext";
 import Settings from "./pages/Settings";
-import Slideshow from "./pages/Slideshow";
+import Slideshow from "./pages/Playlist";
 import { useApp } from "./contexts/AppContext";
 
 function AppContent() {
