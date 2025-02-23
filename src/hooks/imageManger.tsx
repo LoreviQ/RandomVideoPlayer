@@ -14,8 +14,6 @@ interface ImageManagementReturn {
     currentImageUrl: string;
     next: () => void;
     prev: () => void;
-    deleteCurrentImage: () => Promise<boolean>;
-    showImageInfo: () => string;
 }
 export const useImageManagement = ({
     imageFiles,
